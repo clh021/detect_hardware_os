@@ -19,7 +19,20 @@ func Main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		userAgent := r.Header.Get("User-Agent")
-		fmt.Fprintln(w, "这里是环境采集服务，目前采集已经完成，您可以关闭该页面。")
+
+		w.Header().Set("Content-Type", "text/html; charset=utf-8") // 设置响应类型为 HTML
+		fmt.Fprintf(w, `
+			<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<title>环境采集服务</title>
+			</head>
+			<body>
+				<h2>%s</h2>
+			</body>
+			</html>
+		`, "这里是环境采集服务，目前采集已经完成，您可以关闭该页面。")
 		log.Printf("Received User-Agent: %s", userAgent)
 
 		// 设置标志并尝试关闭服务器
