@@ -1,0 +1,7 @@
+# github.com/google/uuid v1.3.1
+## explicit
+github.com/google/uuid
+# github.com/zcalusic/sysinfo v1.0.2
+## explicit; go 1.21
+github.com/zcalusic/sysinfo
+github.com/zcalusic/sysinfo/cpuid
