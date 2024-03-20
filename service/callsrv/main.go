@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/clh021/detect_hardware_os/service/common"
+
 	"github.com/gogf/gf/v2/os/gfile"
 )
 

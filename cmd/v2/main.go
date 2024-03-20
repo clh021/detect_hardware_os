@@ -5,12 +5,16 @@ import (
 
 	"github.com/clh021/detect_hardware_os/service/common"
 	"github.com/clh021/detect_hardware_os/service/getinfo"
+	"github.com/clh021/detect_hardware_os/service/version"
+
 	"github.com/gogf/gf/v2/os/glog"
 )
 
 func main() {
 	ctx := context.TODO()
 	common.MustSuperUser(ctx)
+
+	version.ShowVersionInfo()
 
 	// sysinfo
 	if e := common.PutJsonByFunc(ctx, "sys.json", getinfo.Sys); e != nil {

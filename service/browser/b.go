@@ -7,6 +7,8 @@ import (
 	"os/exec"
 	"sync"
 	"time"
+
+	"github.com/clh021/detect_hardware_os/service/version"
 )
 
 var userAgentReceived = false
@@ -16,6 +18,7 @@ var server *http.Server
 func Main() {
 	fmt.Println("启动环境采集服务...")
 
+	version.ShowVersionInfo()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		userAgent := r.Header.Get("User-Agent")

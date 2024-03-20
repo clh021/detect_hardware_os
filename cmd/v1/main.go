@@ -6,6 +6,7 @@ import (
 
 	"github.com/clh021/detect_hardware_os/service/common"
 	"github.com/clh021/detect_hardware_os/service/develop"
+
 	"github.com/zcalusic/sysinfo"
 
 	"github.com/gogf/gf/v2/os/glog"
