@@ -34,8 +34,7 @@ buildgf:
 	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitCount=${gitCount}\" \
 	'" \
 	cmd/v3/main.go
-
-#	scp bin/dho.arm64 companyft2:~/lianghong/
+	scp bin/0.0.${gitCount}/linux_arm64/${programName} companyft2:~/lianghong/
 
 .PHONY: test
 test:

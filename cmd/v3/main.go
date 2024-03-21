@@ -5,7 +5,7 @@ import (
 
 	"github.com/clh021/detect_hardware_os/service/browser"
 	"github.com/clh021/detect_hardware_os/service/cmd/version"
-	"github.com/clh021/detect_hardware_os/service/common"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gctx"
 )
@@ -17,7 +17,7 @@ var (
 		Brief:       "scan some sysinfo",
 		Description: "scan hardinfo, osinfo, development info, browser info",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			common.MustSuperUser(ctx)
+			// common.MustSuperUser(ctx)
 
 			// // sysinfo
 			// if e := common.PutJsonByFunc(ctx, "sys.json", getinfo.Sys); e != nil {
@@ -35,8 +35,10 @@ var (
 			// }
 
 			// browserinfo
+			bs := browser.GetBrowsers()
+			g.Dump(bs)
 			// browser.TestExtractChromeVersion()
-			browser.Main()
+			// browser.Main()
 			return nil
 		},
 	}
