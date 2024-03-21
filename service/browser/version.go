@@ -3,8 +3,6 @@ package browser
 import (
 	"fmt"
 	"regexp"
-
-	"github.com/gogf/gf/v2/frame/g"
 )
 
 func ExtractChromeVersion(userAgent string) (string, error) {
@@ -17,7 +15,7 @@ func ExtractChromeVersion(userAgent string) (string, error) {
 		return "", fmt.Errorf("无法从 User-Agent 中提取 Chrome 版本号")
 	}
 
-	g.Dump(matches)
+	// g.Dump(matches)
 	// 提取版本号（matches[1] 是第一个括号内的匹配内容）
 	chromeVersion := matches[1]
 	return chromeVersion, nil

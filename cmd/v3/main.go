@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"log"
 
-	"github.com/clh021/detect_hardware_os/service/browser"
 	"github.com/clh021/detect_hardware_os/service/cmd/version"
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/clh021/detect_hardware_os/service/common"
+	"github.com/clh021/detect_hardware_os/service/getinfo"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gctx"
+	"github.com/gogf/gf/v2/os/glog"
 )
 
 var (
@@ -17,28 +19,34 @@ var (
 		Brief:       "scan some sysinfo",
 		Description: "scan hardinfo, osinfo, development info, browser info",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			// common.MustSuperUser(ctx)
+			common.MustSuperUser(ctx)
 
-			// // sysinfo
-			// if e := common.PutJsonByFunc(ctx, "sys.json", getinfo.Sys); e != nil {
-			// 	glog.Error(ctx, e)
-			// }
+			log.Println("启动环境采集服务...")
 
-			// // devinfo
-			// if e := common.PutJsonByFunc(ctx, "dev.json", getinfo.Dev); e != nil {
-			// 	glog.Error(ctx, e)
-			// }
+			// sysinfo
+			log.Println("采集系统环境信息...")
+			if e := common.PutJsonByFunc(ctx, "sys.json", getinfo.Sys); e != nil {
+				glog.Error(ctx, e)
+			}
 
-			// // hardinfo
-			// if e := common.PutJsonByFunc(ctx, "hardinfo.json", getinfo.Hard); e != nil {
-			// 	glog.Error(ctx, e)
-			// }
+			// devinfo
+			log.Println("采集开发环境信息...")
+			if e := common.PutJsonByFunc(ctx, "dev.json", getinfo.Dev); e != nil {
+				glog.Error(ctx, e)
+			}
+
+			// hardinfo
+			log.Println("采集硬件环境信息...")
+			if e := common.PutJsonByFunc(ctx, "hardinfo.json", getinfo.Hard); e != nil {
+				glog.Error(ctx, e)
+			}
 
 			// browserinfo
-			bs := browser.GetBrowsers()
-			g.Dump(bs)
-			// browser.TestExtractChromeVersion()
-			// browser.Main()
+			log.Println("采集浏览器环境信息...")
+			if e := common.PutJsonByFunc(ctx, "browser.json", getinfo.Browser); e != nil {
+				glog.Error(ctx, e)
+			}
+
 			return nil
 		},
 	}
