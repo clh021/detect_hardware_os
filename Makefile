@@ -28,10 +28,10 @@ buildgf:
 	-a amd64,arm64 -s linux \
 	-p ./bin \
 	-e "-trimpath -ldflags '\
-	-X \"github.com/clh021/detect_hardware_os/service/version.BuildTime=${buildTime}\" \
-	-X \"github.com/clh021/detect_hardware_os/service/version.GitTime=${gitTime}\" \
-	-X \"github.com/clh021/detect_hardware_os/service/version.GitHash=${gitHash}\" \
-	-X \"github.com/clh021/detect_hardware_os/service/version.GitCount=${gitCount}\" \
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.BuildTime=${buildTime}\" \
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitTime=${gitTime}\" \
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitHash=${gitHash}\" \
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitCount=${gitCount}\" \
 	'" \
 	cmd/v3/main.go
 
