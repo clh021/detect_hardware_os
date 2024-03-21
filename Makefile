@@ -35,6 +35,8 @@ buildgf:
 	'" \
 	cmd/v3/main.go
 	scp bin/0.0.${gitCount}/linux_arm64/${programName} companyft2:~/lianghong/
+	scp bin/0.0.${gitCount}/linux_amd64/${programName} vboxV10:~/lianghong/
+# V10 安全中心全部禁用,重启,检查全部禁用
 
 .PHONY: test
 test:
