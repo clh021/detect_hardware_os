@@ -19,7 +19,10 @@ build:buildgf
 
 .PHONY: buildgf
 buildgf:
-	gf build -mod vendor \
+	docker run --rm -it -e CGO_ENABLED=1 -e GF_DEBUG=1 -u ${UID}:${GID} -v $(shell pwd)/:/app -w /app \
+	-v ${HOME}/.bin/:/usr/local/hostbin/ \
+	${ImageFullName} \
+	/usr/local/hostbin/gf build -mod vendor \
 	-v 0.0.${gitCount} \
 	-n ${programName} \
 	-a amd64,arm64 -s linux \
@@ -30,34 +33,13 @@ buildgf:
 	-X \"github.com/clh021/detect_hardware_os/service/version.GitHash=${gitHash}\" \
 	-X \"github.com/clh021/detect_hardware_os/service/version.GitCount=${gitCount}\" \
 	'" \
-	cmd/v2/main.go
-#docker run --rm -it -e CGO_ENABLED=1 -e GF_DEBUG=1 -u ${UID}:${GID} -v $(shell pwd)/:/app -w /app ${ImageFullName} \
+	cmd/v3/main.go
 
-.PHONY: buildgo
-buildgo:
-	@docker run --rm -it -e GF_DEBUG=1 -u ${UID}:${GID} -v $(shell pwd)/:/app -w /app ${ImageFullName} \
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -mod vendor \
-	-ldflags '-s -w -X github.com/clh021/detect_hardware_os/cmd.v2.BuildTime=${gitTime}.${gitCID}' \
-	-o "bin/0.0.${gitCount}/linux_amd64/${programName}" \
-	./cmd/v2
-#	go build -mod vendor -o bin/0.0.${gitCount}/linux_amd64/${programName} ./cmd/v2/main.go
-
-#	-v 0.0.${gitCount} \
-#	-n github.com/clh021/detect_hardware_os \
-#	-a amd64,arm64 -s linux \
-#	-p ./bin \
-#	-e "-trimpath -ldflags '\
-#	-X \"github.com/clh021/detect_hardware_os/cmd/v2.buildTime=${buildTime}\" \
-#	-X \"github.com/clh021/detect_hardware_os/cmd/v2.gitTime=${gitTime}\" \
-#	-X \"github.com/clh021/detect_hardware_os/cmd/v2.gitHash=${gitHash}\" \
-#	-X \"github.com/clh021/detect_hardware_os/cmd/v2.gitCount=${gitCount}\" \
-#	'" \
-#	./cmd/v2/main.go
 #	scp bin/dho.arm64 companyft2:~/lianghong/
 
 .PHONY: test
 test:
-	@docker run --rm -it -e CGO_ENABLED=1 -e GF_DEBUG=1 -v $(shell pwd)/:/app -w /app ${ImageFullName} ./0.0.${gitCount}/linux_${GO_ARCH}/${programName}
+	@docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -v $(shell pwd)/:/app -w /app ${ImageFullName} ./0.0.${gitCount}/linux_${GO_ARCH}/${programName}
 
 .PHONY: testVer
 testVer:
