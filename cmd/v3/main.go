@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/clh021/detect_hardware_os/service/browser"
-	"github.com/clh021/detect_hardware_os/service/version"
+	"github.com/clh021/detect_hardware_os/service/cmd/version"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gctx"
 )

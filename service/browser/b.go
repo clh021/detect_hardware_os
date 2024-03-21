@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/clh021/detect_hardware_os/service/version"
+	"github.com/clh021/detect_hardware_os/service/cmd/version"
 )
 
 var userAgentReceived = false
