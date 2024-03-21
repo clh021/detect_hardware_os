@@ -24,7 +24,11 @@ func GetBrowsers() []BrowserItem {
 	for _, c := range Conf {
 		if useAgentCmd, isUserAgent := strings.CutPrefix(c.VersionCmd, "userAgent|"); isUserAgent {
 			userAgentLen++
-			getUserAgentVersion(port, useAgentCmd, c.Reg, c.Name)
+			url, err := getUserAgentVersion(port, useAgentCmd, c.Name)
+			if err != nil {
+				log.Println("系统如法自动获取浏览器版本，请手动协助采集，打开浏览器，访问地址:", url)
+				log.Fatalln(err)
+			}
 		} else {
 			c.Version = getVersion(c.VersionCmd, c.Reg)
 		}
@@ -32,6 +36,7 @@ func GetBrowsers() []BrowserItem {
 	bItem := []BrowserItem{}
 	for {
 		time.Sleep(2 * time.Second)
+		// g.Dump(userAgentMap)
 		if len(userAgentMap) >= userAgentLen {
 			for _, v := range Conf {
 				if strings.HasPrefix(v.VersionCmd, "userAgent|") {

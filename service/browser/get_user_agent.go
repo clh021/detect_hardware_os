@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 var server *http.Server
@@ -23,8 +25,8 @@ func UserAgentServe(port int, userAgentMap *map[string]string) {
 		queryValue := r.URL.Query().Get("b")
 		if len(queryValue) > 0 {
 			(*userAgentMap)[queryValue] = userAgent
-		// } else {
-		// 	g.Dump(r.URL.Query())
+		} else {
+			g.Dump(r.URL.Query())
 			// log.Fatal("query parameter 'b' not found in request URL")
 		}
 	})
@@ -39,8 +41,11 @@ func UserAgentServe(port int, userAgentMap *map[string]string) {
 	}()
 }
 
-func getUserAgentVersion(port int, browserCommand, reg, name string) error {
-	cmd := exec.Command(browserCommand, fmt.Sprintf("http://127.0.0.1:%d?b=%s", port, name))
+func getUserAgentVersion(port int, browserCommand, name string) (url string, err error) {
+	url = fmt.Sprintf("http://127.0.0.1:%d?b=%s", port, name)
+	// log.Printf("%s %s", browserCommand, url)
+	cmd := exec.Command(browserCommand, url)
 	cmd.Env = append(os.Environ(), "DISPLAY=:0")
-	return cmd.Start()
+	err = cmd.Start()
+	return
 }

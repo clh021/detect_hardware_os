@@ -22,28 +22,29 @@ var (
 			common.MustSuperUser(ctx)
 
 			log.Println("启动环境采集服务...")
+			resultPath := "results"
 
 			// sysinfo
 			log.Println("采集系统环境信息...")
-			if e := common.PutJsonByFunc(ctx, "sys.json", getinfo.Sys); e != nil {
+			if e := common.PutJsonByFunc(ctx, resultPath + "/sys.json", getinfo.Sys); e != nil {
 				glog.Error(ctx, e)
 			}
 
 			// devinfo
 			log.Println("采集开发环境信息...")
-			if e := common.PutJsonByFunc(ctx, "dev.json", getinfo.Dev); e != nil {
+			if e := common.PutJsonByFunc(ctx, resultPath + "/dev.json", getinfo.Dev); e != nil {
 				glog.Error(ctx, e)
 			}
 
 			// hardinfo
 			log.Println("采集硬件环境信息...")
-			if e := common.PutJsonByFunc(ctx, "hardinfo.json", getinfo.Hard); e != nil {
+			if e := common.PutJsonByFunc(ctx, resultPath + "/hardinfo.json", getinfo.Hard); e != nil {
 				glog.Error(ctx, e)
 			}
 
 			// browserinfo
 			log.Println("采集浏览器环境信息...")
-			if e := common.PutJsonByFunc(ctx, "browser.json", getinfo.Browser); e != nil {
+			if e := common.PutJsonByFunc(ctx, resultPath + "/browser.json", getinfo.Browser); e != nil {
 				glog.Error(ctx, e)
 			}
 
