@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-
-	"github.com/gogf/gf/v2/frame/g"
 )
 
 var server *http.Server
@@ -26,7 +24,7 @@ func UserAgentServe(port int, userAgentMap *map[string]string) {
 		if len(queryValue) > 0 {
 			(*userAgentMap)[queryValue] = userAgent
 		} else {
-			g.Dump(r.URL.Query())
+			log.Println("Debug:Query:", r.URL.Query())
 			// log.Fatal("query parameter 'b' not found in request URL")
 		}
 	})
@@ -41,10 +39,14 @@ func UserAgentServe(port int, userAgentMap *map[string]string) {
 	}()
 }
 
-func getUserAgentVersion(port int, browserCommand, name string) (url string, err error) {
-	url = fmt.Sprintf("http://127.0.0.1:%d?b=%s", port, name)
-	// log.Printf("%s %s", browserCommand, url)
-	cmd := exec.Command(browserCommand, url)
+func getUserAgentVersion(port int, browserCommand, name string) (openUrl string, err error) {
+	// 判断浏览器命令是否存在
+	if _, err := exec.LookPath(browserCommand); err != nil {
+		return "", fmt.Errorf("无法找到指定的浏览器程序 '%s': %w", browserCommand, err)
+	}
+	openUrl = fmt.Sprintf("http://127.0.0.1:%d?b=%s", port, name)
+	// log.Printf("%s %s", browserCommand, openUrl)
+	cmd := exec.Command(browserCommand, openUrl)
 	cmd.Env = append(os.Environ(), "DISPLAY=:0")
 	err = cmd.Start()
 	return

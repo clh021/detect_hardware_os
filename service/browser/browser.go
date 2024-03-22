@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/clh021/detect_hardware_os/service/callsrv"
@@ -12,49 +13,59 @@ import (
 
 type Conf [4]string
 
-func GetBrowsers() []BrowserItem {
+func GetBrowsers() []*BrowserItem {
 	Conf := getConf()
 	port, err := common.GetFreePort()
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defaultUrl := fmt.Sprintf("http://127.0.0.1:%d?b=defaultbrowser", port)
 	userAgentMap := make(map[string]string)
 	UserAgentServe(port, &userAgentMap)
 	userAgentLen := 0
+
+	var bItem []*BrowserItem
+	waitSecond := 5
+	timeoutTimer := time.NewTimer(time.Duration(waitSecond) * time.Second)
+	defer timeoutTimer.Stop()
+
 	for _, c := range Conf {
 		if useAgentCmd, isUserAgent := strings.CutPrefix(c.VersionCmd, "userAgent|"); isUserAgent {
+			go getUserAgentVersion(port, useAgentCmd, c.Name)
 			userAgentLen++
-			url, err := getUserAgentVersion(port, useAgentCmd, c.Name)
-			if err != nil {
-				log.Println("系统如法自动获取浏览器版本，请手动协助采集，打开浏览器，访问地址:", url)
-				log.Fatalln(err)
-			}
 		} else {
 			c.Version = getVersion(c.VersionCmd, c.Reg)
 		}
 	}
-	bItem := []BrowserItem{}
-	for {
-		time.Sleep(2 * time.Second)
-		// g.Dump(userAgentMap)
-		if len(userAgentMap) >= userAgentLen {
-			for _, v := range Conf {
-				if strings.HasPrefix(v.VersionCmd, "userAgent|") {
-					if userAgentMap[v.Name] != "" {
-						v.Agent = userAgentMap[v.Name]
-						v.Version, err = ExtractChromeVersion(v.Agent)
-						if err != nil {
-							fmt.Println(err)
+
+	var wg sync.WaitGroup
+	wg.Add(userAgentLen)
+
+	checkUserAgent := func() {
+		for {
+			select {
+			case <-timeoutTimer.C:
+				fmt.Printf("仍在获取浏览器信息，您可使用常用浏览器访问地址：%s 以完成浏览器信息采集。\n", defaultUrl)
+			default:
+				if len(userAgentMap) >= userAgentLen || userAgentMap["defaultbrowser"] != "" {
+					for _, v := range Conf {
+						if userAgentMap[v.Name] != "" {
+							v.Agent = userAgentMap[v.Name]
+							v.Version, _ = ExtractChromeVersion(v.Agent)
+							bItem = append(bItem, &v)
+						} else {
+							bItem = append(bItem, &v)
 						}
-						bItem = append(bItem, v)
 					}
-				} else {
-					bItem = append(bItem, v)
+					wg.Done()
+					return
 				}
+				time.Sleep(2 * time.Second)
 			}
-		  break
 		}
 	}
+
+	checkUserAgent()
 	return bItem
 }
 

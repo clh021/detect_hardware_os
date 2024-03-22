@@ -16,6 +16,11 @@ func getConf() (b []BrowserItem) {
 		Name:       "qaxbrowser",
 		VersionCmd: "userAgent|qaxbrowser-safe-stable",
 		Reg:        `Chrome\/(\d+(\.\d+)*)( Safari|$)`,
+	}, BrowserItem{
+		Title:      "默认浏览器",
+		Name:       "defaultbrowser",
+		VersionCmd: "",
+		Reg:        `(\d+(\.\d+)*)`,
 	},
 	)
 	// {"firefox", "Firefox浏览器", "firefox --version", `(\d+(\.\d+)*)`},
