@@ -13,7 +13,7 @@ import (
 
 type Conf [4]string
 
-func GetBrowsers() []*BrowserItem {
+func GetBrowsers() *[]BrowserItem {
 	Conf := getConf()
 	port, err := common.GetFreePort()
 	if err != nil {
@@ -24,7 +24,7 @@ func GetBrowsers() []*BrowserItem {
 	UserAgentServe(port, &userAgentMap)
 	userAgentLen := 0
 
-	var bItem []*BrowserItem
+	bItem := []BrowserItem{}
 	waitSecond := 5
 	timeoutTimer := time.NewTimer(time.Duration(waitSecond) * time.Second)
 	defer timeoutTimer.Stop()
@@ -52,9 +52,9 @@ func GetBrowsers() []*BrowserItem {
 						if userAgentMap[v.Name] != "" {
 							v.Agent = userAgentMap[v.Name]
 							v.Version, _ = ExtractChromeVersion(v.Agent)
-							bItem = append(bItem, &v)
+							bItem = append(bItem, v)
 						} else {
-							bItem = append(bItem, &v)
+							bItem = append(bItem, v)
 						}
 					}
 					wg.Done()
@@ -66,7 +66,7 @@ func GetBrowsers() []*BrowserItem {
 	}
 
 	checkUserAgent()
-	return bItem
+	return &bItem
 }
 
 func getVersion(bin, grepArg string) string {
