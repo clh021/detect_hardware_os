@@ -22,7 +22,9 @@ buildgf:
 	docker run --rm -it -e CGO_ENABLED=1 -e GF_DEBUG=1 -u ${UID}:${GID} -v $(shell pwd)/:/app -w /app \
 	-v ${HOME}/.bin/:/usr/local/hostbin/ \
 	${ImageFullName} \
-	/usr/local/hostbin/gf build -mod vendor \
+	/usr/local/hostbin/gf build \
+	cmd/v3/main.go \
+	-mod vendor \
 	-v 0.0.${gitCount} \
 	-n ${programName} \
 	-a amd64,arm64 -s linux \
@@ -32,8 +34,7 @@ buildgf:
 	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitTime=${gitTime}\" \
 	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitHash=${gitHash}\" \
 	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitCount=${gitCount}\" \
-	'" \
-	cmd/v3/main.go
+	'"
 	scp bin/0.0.${gitCount}/linux_arm64/${programName} companyft2:~/lianghong/
 #	scp bin/0.0.${gitCount}/linux_amd64/${programName} vboxV10:~/lianghong/
 # V10 安全中心全部禁用,重启,检查全部禁用
