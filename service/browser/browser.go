@@ -15,25 +15,28 @@ import (
 
 type ConfigWithLock struct {
 	sync.Mutex
-	Items []BrowserItem
+	Items       []BrowserItem
+	AgentGetCnt int
+	ItemCnt     int
 }
 
 func GetBrowsers() *[]BrowserItem {
-	confWithLock := &ConfigWithLock{Items: getConf()}
+	items := getConf()
+	confWithLock := &ConfigWithLock{Items: items, AgentGetCnt: 0, ItemCnt: len(items)}
 
 	port, err := common.GetFreePort()
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defaultUrl := fmt.Sprintf("http://127.0.0.1:%d?b=defaultbrowser", port)
-	UserAgentServe(port, &confWithLock.Items)
+	UserAgentServe(port, &confWithLock.Items, &confWithLock.AgentGetCnt)
 
-	waitSecond := 6
+	waitSecond := 120
 	timeoutTimer := time.NewTimer(time.Duration(waitSecond) * time.Second)
 	defer timeoutTimer.Stop()
 
-	for i, _ := range confWithLock.Items {
-		// getUserAgentVersion(port, &c)
+	for i := range confWithLock.Items {
+		go sendUserAgentRequest(port, &confWithLock.Items[i])
 		getVersion(&confWithLock.Items[i])
 	}
 
@@ -41,10 +44,15 @@ func GetBrowsers() *[]BrowserItem {
 		for {
 			select {
 			case <-timeoutTimer.C:
-				fmt.Printf("仍在获取浏览器信息，您可使用常用浏览器访问地址：%s 以完成浏览器信息采集。\n", defaultUrl)
+				log.Printf("浏览器内核信息采集超时：%s\n", defaultUrl)
 				return
 			default:
-				time.Sleep(5 * time.Second)
+				log.Println("浏览器内核信息采集中...", confWithLock.AgentGetCnt, "/", confWithLock.ItemCnt)
+				if confWithLock.AgentGetCnt == confWithLock.ItemCnt {
+					log.Println("浏览器内核信息采集完成")
+					return
+				}
+				time.Sleep(6 * time.Second)
 			}
 		}
 	}

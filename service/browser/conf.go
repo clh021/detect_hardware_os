@@ -2,28 +2,28 @@ package browser
 
 func getConf() (b []BrowserItem) {
 	b = append(b, BrowserItem{
-	// 	Title:     "默认浏览器",
-	// 	Name:      "defaultbrowser",
-	// 	Bin:       "",
-	// 	KernelReg: `(\d+(\.\d+)*)`,
-	// 	CmdReg:    `(\d+(\.\d+)*)`,
-	// }, BrowserItem{
+		// 	Title:     "默认浏览器",
+		// 	Name:      "defaultbrowser",
+		// 	Bin:       "",
+		// 	KernelReg: `(\d+(\.\d+)*)`,
+		// 	CmdReg:    `(\d+(\.\d+)*)`,
+		// }, BrowserItem{
 		Title:     "Firefox浏览器",
 		Name:      "firefox",
-		Bin:       "firefox", // Exec=firefox %u
-		KernelReg: `(\d+(\.\d+)*)`,
-		CmdReg:    `(\d+(\.\d+)*)`, // "firefox2":        "Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
+		Bin:       "firefox",       // Exec=firefox %u
+		KernelReg: `Firefox\/(\d+(\.\d+)*)$`, // "firefox2":        "Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
+		CmdReg:    `(\d+(\.\d+)*)`,
 	}, BrowserItem{
 		Title:     "Firefox浏览器ESR",
 		Name:      "firefox-esr",
-		Bin:       "firefox-esr", // Exec=firefox-esr %u
-		KernelReg: `(\d+(\.\d+)*)`,
-		CmdReg:    `(\d+(\.\d+)*)`, // "firefox":         "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0",
+		Bin:       "firefox-esr",   // Exec=firefox-esr %u
+		KernelReg: `Firefox\/(\d+(\.\d+)*)$`, // "firefox":         "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0",
+		CmdReg:    `(\d+(\.\d+)*)`,
 	}, BrowserItem{
 		Title:     "Chrome浏览器",
 		Name:      "chrome",
 		Bin:       "google-chrome-stable", // Exec=/usr/bin/google-chrome-stable %U
-		KernelReg: `(\d+(\.\d+)*)`,
+		KernelReg: `Chrome\/(\d+(\.\d+)*)( Safari|$)`,        // "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
 		CmdReg:    `(\d+(\.\d+)*)`,
 	}, BrowserItem{
 		Title:     "奇安信浏览器",

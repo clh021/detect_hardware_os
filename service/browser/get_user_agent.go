@@ -6,17 +6,18 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-
-	"github.com/gogf/gf/v2/frame/g"
+	"strings"
 )
 
 var server *http.Server
 
-func UserAgentServe(port int, Conf *[]BrowserItem) {
+func UserAgentServe(port int, Conf *[]BrowserItem, agentGetCnt *int) {
 	nameIdxMap := make(map[string]int)
-	for i, c := range *Conf {
+	conf := *Conf
+	for i, c := range conf {
 		nameIdxMap[c.Name] = i
 	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8") // 设置响应类型为 HTML
 		fmt.Fprintf(w,
@@ -26,17 +27,13 @@ func UserAgentServe(port int, Conf *[]BrowserItem) {
 
 		bTag:= r.URL.Query().Get("b")
 		if len(bTag) > 0 {
-			log.Println("-------------------------------")
 			userAgent := r.Header.Get("User-Agent")
-			g.Dump(userAgent)
-			g.Dump(bTag)
-			g.Dump(nameIdxMap[bTag])
-
-			// (*userAgentMap)[queryValue] = userAgent
-			// } else {
-			// 	log.Println("-------------------------------")
-			// 	g.Dump(r)
-			// log.Fatal("query parameter 'b' not found in request URL")
+			if nameIdxMap[bTag] > 0 {
+				*agentGetCnt++
+				log.Println(strAlign(bTag, 20), userAgent)
+				conf[nameIdxMap[bTag]].Agent = userAgent
+				conf[nameIdxMap[bTag]].KernelVer, _ = regVer(userAgent, conf[nameIdxMap[bTag]].KernelReg)
+			}
 		}
 	})
 	server = &http.Server{
@@ -50,13 +47,21 @@ func UserAgentServe(port int, Conf *[]BrowserItem) {
 	}()
 }
 
-func getUserAgentVersion(port int, b *BrowserItem) (openUrl string, err error) {
+func strAlign(str string, strMaxlen int) string {
+	sLen := len(str)
+	if sLen < strMaxlen {
+		str += strings.Repeat(" ", strMaxlen-sLen)
+	}
+	return str
+}
+
+func sendUserAgentRequest(port int, b *BrowserItem) (openUrl string, err error) {
 	// 判断浏览器命令是否存在
 	if _, err := exec.LookPath(b.Bin); err != nil {
 		return "", fmt.Errorf("无法找到指定的浏览器程序 '%s': %w", b.Bin, err)
 	}
 	openUrl = fmt.Sprintf("http://127.0.0.1:%d?b=%s", port, b.Name)
-	log.Printf("openUrl: %s %s", b.Bin, openUrl)
+	// log.Printf("openUrl: %s %s", b.Bin, openUrl)
 	cmd := exec.Command(b.Bin, openUrl)
 	cmd.Env = append(os.Environ(), "DISPLAY=:0")
 	err = cmd.Start()
