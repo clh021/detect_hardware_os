@@ -3,78 +3,79 @@ package browser
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/clh021/detect_hardware_os/service/callsrv"
 	"github.com/clh021/detect_hardware_os/service/common"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
-type Conf [4]string
+type ConfigWithLock struct {
+	sync.Mutex
+	Items []BrowserItem
+}
 
 func GetBrowsers() *[]BrowserItem {
-	Conf := getConf()
+	confWithLock := &ConfigWithLock{Items: getConf()}
+
 	port, err := common.GetFreePort()
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defaultUrl := fmt.Sprintf("http://127.0.0.1:%d?b=defaultbrowser", port)
-	userAgentMap := make(map[string]string)
-	UserAgentServe(port, &userAgentMap)
-	userAgentLen := 0
+	UserAgentServe(port, &confWithLock.Items)
 
-	bItem := []BrowserItem{}
-	waitSecond := 5
+	waitSecond := 6
 	timeoutTimer := time.NewTimer(time.Duration(waitSecond) * time.Second)
 	defer timeoutTimer.Stop()
 
-	for _, c := range Conf {
-		if useAgentCmd, isUserAgent := strings.CutPrefix(c.VersionCmd, "userAgent|"); isUserAgent {
-			go getUserAgentVersion(port, useAgentCmd, c.Name)
-			userAgentLen++
-		} else {
-			c.Version = getVersion(c.VersionCmd, c.Reg)
-		}
+	for i, _ := range confWithLock.Items {
+		// getUserAgentVersion(port, &c)
+		getVersion(&confWithLock.Items[i])
 	}
-
-	var wg sync.WaitGroup
-	wg.Add(userAgentLen)
 
 	checkUserAgent := func() {
 		for {
 			select {
 			case <-timeoutTimer.C:
 				fmt.Printf("仍在获取浏览器信息，您可使用常用浏览器访问地址：%s 以完成浏览器信息采集。\n", defaultUrl)
+				return
 			default:
-				if len(userAgentMap) >= userAgentLen || userAgentMap["defaultbrowser"] != "" {
-					for _, v := range Conf {
-						if userAgentMap[v.Name] != "" {
-							v.Agent = userAgentMap[v.Name]
-							v.Version, _ = ExtractChromeVersion(v.Agent)
-							bItem = append(bItem, v)
-						} else {
-							bItem = append(bItem, v)
-						}
-					}
-					wg.Done()
-					return
-				}
-				time.Sleep(2 * time.Second)
+				time.Sleep(5 * time.Second)
 			}
 		}
 	}
-
 	checkUserAgent()
-	return &bItem
+	fmt.Println("===================================================")
+	g.Dump(confWithLock.Items)
+	fmt.Println("===================================================")
+	return &confWithLock.Items
 }
 
-func getVersion(bin, grepArg string) string {
-	cmd := fmt.Sprintf("%s | grep -P \"%s\" -m 1 -o", bin, grepArg)
-	// log.Println(cmd)
-	out, _ := callsrv.ExecGetSysInfoStdout("bash", "-c", cmd)
-	// if err != nil {
-	// 	log.Println(strings.ReplaceAll(err.Error(), "\r", ""))
-	// }
-	return strings.Split(string(out), "\n")[0]
+func getVersion(b *BrowserItem) (e error) {
+	out, e := callsrv.ExecGetSysInfoStdout(b.Bin, "--version")
+	if e != nil {
+		return
+	}
+	b.CmdVer = strings.TrimSpace(string(out))
+
+	cmdVer := strings.TrimPrefix(b.CmdVer, "360Browser") // 针对360浏览器的数字调整
+
+	b.Version, e = regVer(cmdVer, b.CmdReg)
+	return
+}
+
+func regVer(str, reg string) (string, error) {
+	pattern := regexp.MustCompile(reg)
+	// 查找匹配项
+	matches := pattern.FindStringSubmatch(str)
+	if len(matches) < 2 {
+		return "", fmt.Errorf("无法提取 版本号")
+	}
+	// 提取版本号（matches[1] 是第一个括号内的匹配内容）
+	ver := matches[1]
+	return ver, nil
 }

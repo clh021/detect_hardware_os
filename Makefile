@@ -17,9 +17,27 @@ ImageFullName=leehom/detect:centos7.go1.21.7
 .PHONY: build
 build:buildgf
 
+.PHONY: buildgo
+buildgo:
+	docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -u ${UID}:${GID} -v $(shell pwd)/:/app -w /app \
+	${ImageFullName} \
+	go build \
+	-mod vendor \
+	-o ./bin/0.0.${gitCount}/linux_amd64/${programName} \
+	-ldflags '\
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.BuildTime=${buildTime}\" \
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitTime=${gitTime}\" \
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitHash=${gitHash}\" \
+	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitCount=${gitCount}\" \
+	' \
+	cmd/v3/main.go
+	scp bin/0.0.${gitCount}/linux_amd64/${programName} vboxV10:~/lianghong/
+#	scp bin/0.0.${gitCount}/linux_arm64/${programName} companyft2:~/lianghong/
+# V10 安全中心全部禁用,重启,检查全部禁用
+
 .PHONY: buildgf
 buildgf:
-	docker run --rm -it -e CGO_ENABLED=1 -e GF_DEBUG=1 -u ${UID}:${GID} -v $(shell pwd)/:/app -w /app \
+	docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -u ${UID}:${GID} -v $(shell pwd)/:/app -w /app \
 	-v ${HOME}/.bin/:/usr/local/hostbin/ \
 	${ImageFullName} \
 	/usr/local/hostbin/gf build \
@@ -35,8 +53,8 @@ buildgf:
 	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitHash=${gitHash}\" \
 	-X \"github.com/clh021/detect_hardware_os/service/cmd/version.GitCount=${gitCount}\" \
 	'"
-	scp bin/0.0.${gitCount}/linux_arm64/${programName} companyft2:~/lianghong/
-#	scp bin/0.0.${gitCount}/linux_amd64/${programName} vboxV10:~/lianghong/
+	scp bin/0.0.${gitCount}/linux_amd64/${programName} vboxV10:~/lianghong/
+#	scp bin/0.0.${gitCount}/linux_arm64/${programName} companyft2:~/lianghong/
 # V10 安全中心全部禁用,重启,检查全部禁用
 
 .PHONY: test

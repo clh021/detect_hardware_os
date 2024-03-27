@@ -19,10 +19,15 @@ var (
 		Brief:       "scan some sysinfo",
 		Description: "scan hardinfo, osinfo, development info, browser info",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			common.MustSuperUser(ctx)
-
+			// common.MustSuperUser(ctx)
 			log.Println("启动环境采集服务...")
 			resultPath := "results"
+
+			// browserinfo
+			log.Println("采集浏览器环境信息...")
+			if e := common.PutJsonByFunc(ctx, resultPath + "/browser.json", getinfo.Browser); e != nil {
+				glog.Error(ctx, e)
+			}
 
 			// sysinfo
 			log.Println("采集系统环境信息...")
@@ -41,13 +46,6 @@ var (
 			if e := common.PutJsonByFunc(ctx, resultPath + "/hardinfo.json", getinfo.Hard); e != nil {
 				glog.Error(ctx, e)
 			}
-
-			// browserinfo
-			log.Println("采集浏览器环境信息...")
-			if e := common.PutJsonByFunc(ctx, resultPath + "/browser.json", getinfo.Browser); e != nil {
-				glog.Error(ctx, e)
-			}
-
 			return nil
 		},
 	}

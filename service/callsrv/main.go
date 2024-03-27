@@ -23,7 +23,7 @@ func Exec(pathBin string, args ...string) error {
 }
 
 func ExecGetCmdStdoutWithEnv(appendEnv []string, pathBin string, args ...string) ([]byte, error) {
-	env := os.Environ()
+	// env := os.Environ()
 	cmd := exec.Command(pathBin, args...)
 	// argArr := []string{"-c"}
 	// argArr = append(argArr, pathBin)
@@ -34,7 +34,7 @@ func ExecGetCmdStdoutWithEnv(appendEnv []string, pathBin string, args ...string)
 	// }
 	// cmd.Stdout = os.Stdout
 	// cmd.Stderr = os.Stderr
-	cmd.Env = append(env, appendEnv...)
+	// cmd.Env = append(env, appendEnv...)
 	cmd.Stdin = os.Stdin
 	return cmd.Output()
 }
