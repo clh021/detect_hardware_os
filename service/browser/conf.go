@@ -2,12 +2,6 @@ package browser
 
 func getConf() (b []BrowserItem) {
 	b = append(b, BrowserItem{
-		// 	Title:     "默认浏览器",
-		// 	Name:      "defaultbrowser",
-		// 	Bin:       "",
-		// 	KernelReg: `(\d+(\.\d+)*)`,
-		// 	CmdReg:    `(\d+(\.\d+)*)`,
-		// }, BrowserItem{
 		Title:     "Firefox浏览器",
 		Name:      "firefox",
 		Desktop:   "firefox.desktop",

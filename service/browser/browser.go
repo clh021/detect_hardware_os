@@ -31,7 +31,7 @@ func GetBrowsers() *[]BrowserItem {
 	defaultUrl := fmt.Sprintf("http://127.0.0.1:%d?b=defaultbrowser", port)
 	UserAgentServe(port, &confWithLock.Items, &confWithLock.AgentGetCnt)
 
-	waitSecond := 130
+	waitSecond := 330
 	timeoutTimer := time.NewTimer(time.Duration(waitSecond) * time.Second)
 	defer timeoutTimer.Stop()
 
@@ -91,7 +91,7 @@ func filterConf(items []BrowserItem) []BrowserItem {
 	for _, item := range items {
 		if item.Bin != "" {
 			if _, err := exec.LookPath(item.Bin); err == nil {
-				fmt.Println("append:", item.Bin)
+				// fmt.Println("append:", item.Bin)
 				validItems = append(validItems, item)
 			}
 		}
