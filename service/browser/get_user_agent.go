@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
 var server *http.Server
@@ -20,21 +22,25 @@ func UserAgentServe(port int, Conf *[]BrowserItem, agentGetCnt *int) {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8") // 设置响应类型为 HTML
-		fmt.Fprintf(w,
-			`<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><title>环境采集服务</title></head><body><h2>%s</h2></body></html>`,
-			"这里是环境采集服务，目前采集已经完成，您可以关闭该页面。",
-		)
 
 		bTag:= r.URL.Query().Get("b")
 		if len(bTag) > 0 {
 			userAgent := r.Header.Get("User-Agent")
-			if nameIdxMap[bTag] > 0 {
+			if nameIdxMap[bTag] >= 0 {
 				*agentGetCnt++
 				log.Println(strAlign(bTag, 20), userAgent)
 				conf[nameIdxMap[bTag]].Agent = userAgent
 				conf[nameIdxMap[bTag]].KernelVer, _ = regVer(userAgent, conf[nameIdxMap[bTag]].KernelReg)
 			}
 		}
+		fmt.Fprintf(w,
+			`<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><title>环境采集服务</title></head><body><h2>%s<br />%s<br />%s<br /><pre>%+v</pre></h2></body></html>`,
+			bTag,
+			gtime.Datetime(),
+			"这里是环境采集服务，目前采集已经完成，您可以关闭该页面。",
+			conf[nameIdxMap[bTag]].Agent,
+		)
+
 	})
 	server = &http.Server{
 		Addr: fmt.Sprintf(":%d", port),
