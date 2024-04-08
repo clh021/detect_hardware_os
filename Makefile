@@ -61,6 +61,18 @@ buildgf:
 test:
 	@docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -v $(shell pwd)/:/app -w /app ${ImageFullName} ./0.0.${gitCount}/linux_${GO_ARCH}/${programName}
 
-.PHONY: testVer
-testVer:
-	docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -v $(shell pwd)/bin:/app -w /app ${ImageFullName} ./0.0.${gitCount}/linux_${GO_ARCH}/${programName} version
+.PHONY: test_ver
+test_ver:
+	@docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -v $(shell pwd)/bin:/app -w /app ${ImageFullName} ./0.0.${gitCount}/linux_${GO_ARCH}/${programName} version
+
+.PHONY: test_euler
+test_euler:
+	@docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -v $(shell pwd)/bin:/app -w /app openeuler/openeuler:20.03-lts ./0.0.${gitCount}/linux_${GO_ARCH}/${programName}
+
+.PHONY: test_debian
+test_debian:
+	@docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -v $(shell pwd)/bin:/app -w /app debian:10 ./0.0.${gitCount}/linux_${GO_ARCH}/${programName}
+
+.PHONY: test_kylinv10
+test_kylinv10:
+	@docker run --rm -it -e CGO_ENABLED=0 -e GF_DEBUG=1 -v $(shell pwd)/bin:/app -w /app hoytluo/kylinv10sp2:0608 ./0.0.${gitCount}/linux_${GO_ARCH}/${programName}
