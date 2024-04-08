@@ -16,12 +16,6 @@ if [[ ! "$tag_name" =~ $regex ]]; then
   exit 1
 fi
 
-# 在本地创建新的tag
-git tag -a "$tag_name" -m "Creating new tag: $tag_name"
-
-# 推送新创建的tag到远程仓库
-git push origin "$tag_name"
-
 # 更新README.md文件，假设要替换第6行的内容
 readme_file="README.md"
 line_number=6
@@ -34,5 +28,11 @@ sed -i "${line_number}s/.*/$new_line/" "$readme_file"
 git add "$readme_file"
 git commit -m "Update version reference in README.md to $tag_name"
 git push
+
+# 在本地创建新的tag
+git tag -a "$tag_name" -m "Creating new tag: $tag_name"
+
+# 推送新创建的tag到远程仓库
+git push origin "$tag_name"
 
 echo "Tag '$tag_name' has been created, pushed, and updated in README.md."
