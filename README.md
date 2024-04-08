@@ -3,5 +3,5 @@ detect hardware info and os info
 
 # Usage
 ```bash
-go get github.com/clh021/detect_hardware_os@v0.0.1
+go get github.com/clh021/detect_hardware_os@v0.0.2
 ```
