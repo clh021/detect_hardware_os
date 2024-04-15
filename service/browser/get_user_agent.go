@@ -23,7 +23,7 @@ func UserAgentServe(port int, Conf *[]BrowserItem, agentGetCnt *int) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8") // 设置响应类型为 HTML
 
-		bTag:= r.URL.Query().Get("b")
+		bTag := r.URL.Query().Get("b")
 		if len(bTag) > 0 {
 			userAgent := r.Header.Get("User-Agent")
 			if nameIdxMap[bTag] >= 0 {

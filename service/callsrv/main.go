@@ -116,4 +116,3 @@ func WriteCSV(name string) error {
 func GetReleaseOutput() ([]byte, error) {
 	return exec.Command("sh", "-c", "cat /etc/*release").Output()
 }
-

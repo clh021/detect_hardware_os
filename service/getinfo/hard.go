@@ -12,10 +12,10 @@ import (
 )
 
 type hardinfo struct {
-	Cpu      *cpu.Info        `json:"cpu,omitempty"`
-	Memory   *memory.Info     `json:"memory,omitempty"`
-	Block    *block.Info      `json:"block,omitempty"`
-	Topology *topology.Info   `json:"topology,omitempty"`
+	Cpu      *cpu.Info      `json:"cpu,omitempty"`
+	Memory   *memory.Info   `json:"memory,omitempty"`
+	Block    *block.Info    `json:"block,omitempty"`
+	Topology *topology.Info `json:"topology,omitempty"`
 }
 
 func Hard(ctx context.Context) (interface{}, error) {
