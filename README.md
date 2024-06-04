@@ -156,14 +156,19 @@ type Kernel struct {
 #### DMI 信息
 
 Product信息: 名称,厂商,版本,序列号,UUID,SKU
+
 Board信息: 名称,厂商,版本,序列号,资产标签
+
 Chassis信息: 类型,厂商,版本,序列号,资产标签
+
 BIOS信息: 厂商,版本,日期
 
 #### SMBIOS 信息
 
 网络设备信息: 名称,驱动,MAC地址,端口,最大传输速率
+
 操作系统信息: 名称,厂商,版本,发行版本,架构
+
 系统内核信息: 版本,发行版本,架构
 
 ### 开发环境信息
@@ -178,7 +183,11 @@ gcc, clang, dmd, gbc3, java, csharp_old, csharp, vala, haskell, pascal, go, rust
 
 ### 硬件环境信息
 
+
 CPU信息: 厂商,型号,速度,缓存大小,物理CPU,物理CPU核心,逻辑CPU核心
+
 Memory信息: 类型,速度,大小
+
 存储设备信息: 名称,驱动,厂商,型号,序列号,大小
+
 Node信息: 主机名,机器ID,虚拟化类型,时区
