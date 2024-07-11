@@ -1,3 +1,7 @@
+# Important Notice: Repository Archival and Migration Pathway
+
+[detect_hardware_os]'s active development and maintenance have officially ceased as of [2024-07-11]. This decision aligns with our ongoing efforts to streamline project scopes and concentrate resources on delivering a more cohesive and enhanced toolkit.To continue supporting your needs effectively, we enthusiastically recommend transitioning to our new repository, [gutils](https://github.com/clh021/gutils).
+
 # detect_hardware_os
 detect hardware info and os info
 
